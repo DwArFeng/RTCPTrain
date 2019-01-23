@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<info-default name="默认" file="attributes/i18n/zh_CN.properties" />
+	<info locale="zh_CN" name="简体中文" file="attributes/i18n/zh_CN.properties" />
+</root>

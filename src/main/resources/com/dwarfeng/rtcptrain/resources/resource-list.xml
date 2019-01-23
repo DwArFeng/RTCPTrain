@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- 配置文件 -->
+	<info key="logger-setting" path="attributes/logger-setting.xml"
+		default="/com/dwarfeng/rtcptrain/resources/logger-setting.xml" />
+	<info key="i18n-setting" path="attributes/i18n-setting.xml"
+		default="/com/dwarfeng/rtcptrain/resources/i18n-setting.xml" />
+	<info key="config" path="attributes/config.properties"
+		default="/com/dwarfeng/rtcptrain/resources/config.properties" />
+	<info key="modal" path="attributes/modal.properties"
+		default="/com/dwarfeng/rtcptrain/resources/modal.properties" />
+	<!-- 国际化文件 -->
+	<info key="i18n.zh_CN" path="attributes/i18n/zh_CN.properties"
+		default="/com/dwarfeng/rtcptrain/resources/i18n/zh_CN.properties" />
+</root>

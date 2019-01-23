@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<Console name="std.all.console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" charset="UTF-8" />
+		</Console>
+		<RollingFile name="std.info.rollingfile" fileName="logs/info.log" filePattern="logs/$${date:yyyy-MM}/info-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" charset="UTF-8" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="168" modulate="true" />
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+		</RollingFile>
+		<RollingFile name="std.warn.rollingfile" fileName="logs/warn.log" filePattern="logs/$${date:yyyy-MM}/error-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" charset="UTF-8" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="168" modulate="true" />
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+		</RollingFile>
+		<RollingFile name="std.error.rollingfile" fileName="logs/error.log" filePattern="logs/$${date:yyyy-MM}/error-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout pattern="[%d{DEFAULT}] [%p] [%t]: %m%n" charset="UTF-8" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="168" modulate="true" />
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+		</RollingFile>
+
+		<Async name="sync:std.all.console">
+			<AppenderRef ref="std.all.console" />
+		</Async>
+		<Async name="sync:std.info.rollingfile">
+			<AppenderRef ref="std.info.rollingfile" />
+		</Async>
+		<Async name="sync:std.warn.rollingfile">
+			<AppenderRef ref="std.warn.rollingfile" />
+		</Async>
+		<Async name="sync:std.error.rollingfile">
+			<AppenderRef ref="std.error.rollingfile" />
+		</Async>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="std.all" level="trace" additivity="false">
+			<appender-ref ref="sync:std.all.console" />
+		</Logger>
+		<Logger name="std.info" level="info" additivity="false">
+			<appender-ref ref="sync:std.info.rollingfile" />
+		</Logger>
+		<Logger name="std.warn" level="warn" additivity="false">
+			<appender-ref ref="sync:std.warn.rollingfile" />
+		</Logger>
+		<Logger name="std.error" level="error" additivity="false">
+			<appender-ref ref="sync:std.error.rollingfile" />
+		</Logger>
+	</Loggers>
+</Configuration>
