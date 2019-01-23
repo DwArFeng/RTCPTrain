@@ -5,6 +5,7 @@ import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
 
 class RTCPTrainModelManager implements ModelManager {
 
@@ -12,6 +13,14 @@ class RTCPTrainModelManager implements ModelManager {
 
 	public RTCPTrainModelManager(RTCPTrain rtcpTrain) {
 		this.rtcpTrain = rtcpTrain;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncRTCPParamModel getActualRTCPParamModel() {
+		return rtcpTrain.getActualRTCPParamModel();
 	}
 
 	/**
@@ -28,6 +37,14 @@ class RTCPTrainModelManager implements ModelManager {
 	@Override
 	public SyncSettingHandler getCoreSettingHandler() {
 		return rtcpTrain.getCoreSettingHandler();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncRTCPParamModel getCurrentRTCPParamModel() {
+		return rtcpTrain.getCurrentRTCPParamModel();
 	}
 
 	/**

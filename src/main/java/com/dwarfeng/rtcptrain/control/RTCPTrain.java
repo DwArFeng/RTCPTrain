@@ -31,6 +31,8 @@ import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.DefaultSettingHandler;
 import com.dwarfeng.dutil.develop.setting.SettingUtil;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.rtcptrain.model.DefaultRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
 import com.dwarfeng.rtcptrain.view.MainFrame;
 
 /**
@@ -72,7 +74,12 @@ public class RTCPTrain {
 	/** 配置处理器。 */
 	private final SyncResourceHandler resourceHandler = ResourceUtil.syncResourceHandler(new DelegateResourceHandler());
 
-	// TODO 此处填写专用模型。
+	/** 当前使用的RTCP参数。 */
+	private final SyncRTCPParamModel currentRTCPParamModel = com.dwarfeng.rtcptrain.util.ModelUtil
+			.syncRTCPParamModel(new DefaultRTCPParamModel());
+	/** 实际的RTCP参数。 */
+	private final SyncRTCPParamModel actualRTCPParamModel = com.dwarfeng.rtcptrain.util.ModelUtil
+			.syncRTCPParamModel(new DefaultRTCPParamModel());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的退出代码。 */
@@ -159,6 +166,13 @@ public class RTCPTrain {
 	}
 
 	/**
+	 * @return the actualRTCPParamModel
+	 */
+	SyncRTCPParamModel getActualRTCPParamModel() {
+		return actualRTCPParamModel;
+	}
+
+	/**
 	 * @return the background
 	 */
 	Background getBackground() {
@@ -177,6 +191,13 @@ public class RTCPTrain {
 	 */
 	SyncSettingHandler getCoreSettingHandler() {
 		return coreSettingHandler;
+	}
+
+	/**
+	 * @return the currentRTCPParamModel
+	 */
+	SyncRTCPParamModel getCurrentRTCPParamModel() {
+		return currentRTCPParamModel;
 	}
 
 	/**

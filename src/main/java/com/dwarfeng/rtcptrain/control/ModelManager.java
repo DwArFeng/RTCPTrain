@@ -5,8 +5,14 @@ import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
+import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
 
 public interface ModelManager {
+
+	/**
+	 * @return the actualRTCPParamModel
+	 */
+	public SyncRTCPParamModel getActualRTCPParamModel();
 
 	/**
 	 * @return the background
@@ -17,6 +23,11 @@ public interface ModelManager {
 	 * @return the coreSettingHandler
 	 */
 	public SyncSettingHandler getCoreSettingHandler();
+
+	/**
+	 * @return the currentRTCPParamModel
+	 */
+	public SyncRTCPParamModel getCurrentRTCPParamModel();
 
 	/**
 	 * @return the i18nHandler
