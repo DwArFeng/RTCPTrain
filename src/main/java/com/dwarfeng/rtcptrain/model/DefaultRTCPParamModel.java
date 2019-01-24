@@ -1,5 +1,11 @@
 package com.dwarfeng.rtcptrain.model;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
+import com.dwarfeng.rtcptrain.model.obverser.RTCPParamObverser;
+
 public class DefaultRTCPParamModel extends AbstractRTCPParamModel {
 
 	private double v00;
@@ -21,11 +27,19 @@ public class DefaultRTCPParamModel extends AbstractRTCPParamModel {
 	private double toolLength;
 
 	public DefaultRTCPParamModel() {
-		this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Collections.newSetFromMap(new WeakHashMap<>()));
 	}
 
 	public DefaultRTCPParamModel(double v00, double v01, double v02, double v10, double v11, double v12, double v20,
 			double v21, double v22, double v30, double v31, double v32, double toolLength) {
+		this(v00, v01, v02, v10, v11, v12, v20, v21, v22, v30, v31, v32, toolLength,
+				Collections.newSetFromMap(new WeakHashMap<>()));
+	}
+
+	public DefaultRTCPParamModel(double v00, double v01, double v02, double v10, double v11, double v12, double v20,
+			double v21, double v22, double v30, double v31, double v32, double toolLength,
+			Set<RTCPParamObverser> obversers) throws NullPointerException {
+		super(obversers);
 		this.v00 = v00;
 		this.v01 = v01;
 		this.v02 = v02;

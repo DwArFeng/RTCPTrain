@@ -6,8 +6,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dwarfeng.rtcptrain.model.RTCPParamModel;
+import com.dwarfeng.rtcptrain.model.RotateAxisModel;
 import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
 import com.dwarfeng.rtcptrain.model.obverser.RTCPParamObverser;
+import com.dwarfeng.rtcptrain.model.obverser.RotateAxisObverser;
 
 /**
  * 模型工具类。
@@ -696,6 +699,227 @@ public final class ModelUtil {
 			lock.writeLock().lock();
 			try {
 				return delegate.setToolLength(value);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+	}
+
+	/**
+	 * 根据指定的回转轴模型生成一个不可编辑的回转轴模型。
+	 * 
+	 * @param model 指定的模型。
+	 * @return 根据指定的模型生成的不可编辑的回转轴模型。
+	 * @throws NullPointerException 指定的入口参数为 <code> null </code>。
+	 */
+	public static RotateAxisModel unmodifiableRotateAxisModel(RotateAxisModel model) throws NullPointerException {
+		Objects.requireNonNull(model, "入口参数 model 不能为 null。");
+		return new UnmodifiableRotateAxisModel(model);
+	}
+
+	static final class UnmodifiableRotateAxisModel implements RotateAxisModel {
+
+		private final RotateAxisModel delegate;
+
+		public UnmodifiableRotateAxisModel(RotateAxisModel delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<RotateAxisObverser> getObversers() {
+			return delegate.getObversers();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addObverser(RotateAxisObverser obverser) throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("addObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeObverser(RotateAxisObverser obverser) throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("removeObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clearObverser() throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("clearObverser");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public double getA() {
+			return delegate.getA();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public double getC() {
+			return delegate.getC();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean setA(double value) throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("setA");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean setC(double value) throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("setC");
+		}
+
+	}
+
+	/**
+	 * 根据指定的回转轴模型生成线程安全的回转轴模型。
+	 * 
+	 * @param model 指定的模型。
+	 * @return 通过指定的回转轴模型生成的线程安全的回转轴模型。
+	 * @throws NullPointerException 指定的入口参数为 <code> null </code>。
+	 */
+	public static SyncRotateAxisModel syncRotateAxisModel(RotateAxisModel model) throws NullPointerException {
+		Objects.requireNonNull(model, "入口参数 model 不能为 null。");
+		return new SyncRotateAxisModelImpl(model);
+	}
+
+	private static final class SyncRotateAxisModelImpl implements SyncRotateAxisModel {
+
+		private final RotateAxisModel delegate;
+		private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+		public SyncRotateAxisModelImpl(RotateAxisModel delegate) {
+			this.delegate = delegate;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ReadWriteLock getLock() {
+			return lock;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Set<RotateAxisObverser> getObversers() {
+			lock.readLock().lock();
+			try {
+				return delegate.getObversers();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean addObverser(RotateAxisObverser obverser) throws UnsupportedOperationException {
+			lock.writeLock().lock();
+			try {
+				return delegate.addObverser(obverser);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean removeObverser(RotateAxisObverser obverser) throws UnsupportedOperationException {
+			lock.writeLock().lock();
+			try {
+				return delegate.removeObverser(obverser);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clearObverser() throws UnsupportedOperationException {
+			lock.writeLock().lock();
+			try {
+				delegate.clearObverser();
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public double getA() {
+			lock.readLock().lock();
+			try {
+				return delegate.getA();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public double getC() {
+			lock.readLock().lock();
+			try {
+				return delegate.getC();
+			} finally {
+				lock.readLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean setA(double value) throws UnsupportedOperationException {
+			lock.writeLock().lock();
+			try {
+				return delegate.setA(value);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean setC(double value) throws UnsupportedOperationException {
+			lock.writeLock().lock();
+			try {
+				return delegate.setC(value);
 			} finally {
 				lock.writeLock().unlock();
 			}

@@ -6,6 +6,7 @@ import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
 
 public interface ModelManager {
 
@@ -30,6 +31,11 @@ public interface ModelManager {
 	public SyncRTCPParamModel getCurrentRTCPParamModel();
 
 	/**
+	 * @return the datumRotateAxisModel
+	 */
+	public SyncRotateAxisModel getDatumRotateAxisModel();
+
+	/**
 	 * @return the i18nHandler
 	 */
 	public SyncI18nHandler getI18nHandler();
@@ -38,6 +44,11 @@ public interface ModelManager {
 	 * @return the loggerHandler
 	 */
 	public SyncLoggerHandler getLoggerHandler();
+
+	/**
+	 * @return the measureRotateModel
+	 */
+	public SyncRotateAxisModel getMeasureRotateModel();
 
 	/**
 	 * @return the modalSettingHandler

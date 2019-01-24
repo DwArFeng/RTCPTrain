@@ -7,25 +7,34 @@ import java.util.WeakHashMap;
 
 import com.dwarfeng.rtcptrain.model.obverser.RTCPParamObverser;
 
+/**
+ * 抽象RTCP参数模型。
+ * 
+ * <p>
+ * RTCP参数模型的抽象实现。
+ * 
+ * @author DwArFeng
+ * @since 0.0.0-alpha
+ */
 public abstract class AbstractRTCPParamModel implements RTCPParamModel {
 
-	/** 抽象集合模型的侦听器集合。 */
+	/** 抽象RTCP参数模型的侦听器集合。 */
 	protected final Set<RTCPParamObverser> obversers;
 
 	/**
-	 * 生成一个默认的抽象集合模型。
+	 * 新实例。
 	 */
 	public AbstractRTCPParamModel() {
 		this(Collections.newSetFromMap(new WeakHashMap<>()));
 	}
 
 	/**
-	 * 生成一个具有指定的侦听器集合的的抽象集合模型。
+	 * 新实例。
 	 * 
-	 * @param obversers 指定的侦听器集合。
-	 * @throws NullPointerException 入口参数为 <code>null</code>。
+	 * @param obversers 指定的观察器集合。
+	 * @throws NullPointerException 指定的入口参数为 <code> null </code>。
 	 */
-	public AbstractRTCPParamModel(Set<RTCPParamObverser> obversers) {
+	public AbstractRTCPParamModel(Set<RTCPParamObverser> obversers) throws NullPointerException {
 		Objects.requireNonNull(obversers, "入口参数 obversers 不能为 null。");
 		this.obversers = obversers;
 	}

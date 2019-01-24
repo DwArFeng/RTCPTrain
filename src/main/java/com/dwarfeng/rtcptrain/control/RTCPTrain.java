@@ -32,7 +32,9 @@ import com.dwarfeng.dutil.develop.setting.DefaultSettingHandler;
 import com.dwarfeng.dutil.develop.setting.SettingUtil;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.rtcptrain.model.DefaultRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.DefaultRotateAxisModel;
 import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
 import com.dwarfeng.rtcptrain.view.MainFrame;
 
 /**
@@ -80,6 +82,12 @@ public class RTCPTrain {
 	/** 实际的RTCP参数。 */
 	private final SyncRTCPParamModel actualRTCPParamModel = com.dwarfeng.rtcptrain.util.ModelUtil
 			.syncRTCPParamModel(new DefaultRTCPParamModel());
+	/** 基准回转轴。 */
+	private final SyncRotateAxisModel datumRotateAxisModel = com.dwarfeng.rtcptrain.util.ModelUtil
+			.syncRotateAxisModel(new DefaultRotateAxisModel());
+	/** 测量回转轴。 */
+	private final SyncRotateAxisModel measureRotateModel = com.dwarfeng.rtcptrain.util.ModelUtil
+			.syncRotateAxisModel(new DefaultRotateAxisModel());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的退出代码。 */
@@ -201,11 +209,20 @@ public class RTCPTrain {
 	}
 
 	/**
+	 * @return the datumRotateAxisModel
+	 */
+	SyncRotateAxisModel getDatumRotateAxisModel() {
+		return datumRotateAxisModel;
+	}
+
+	/**
 	 * @return the exitCodeRef
 	 */
 	SyncReferenceModel<Integer> getExitCodeRef() {
 		return exitCodeRef;
 	}
+	
+	
 
 	/**
 	 * @return the i18nHandler
@@ -226,6 +243,13 @@ public class RTCPTrain {
 	 */
 	SyncReferenceModel<MainFrame> getMainFrameRef() {
 		return mainFrameRef;
+	}
+
+	/**
+	 * @return the measureRotateModel
+	 */
+	SyncRotateAxisModel getMeasureRotateModel() {
+		return measureRotateModel;
 	}
 
 	/**

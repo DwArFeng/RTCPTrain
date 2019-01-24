@@ -6,6 +6,7 @@ import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
 import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
 
 class RTCPTrainModelManager implements ModelManager {
 
@@ -51,6 +52,14 @@ class RTCPTrainModelManager implements ModelManager {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public SyncRotateAxisModel getDatumRotateAxisModel() {
+		return rtcpTrain.getDatumRotateAxisModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SyncI18nHandler getI18nHandler() {
 		return rtcpTrain.getI18nHandler();
 	}
@@ -61,6 +70,14 @@ class RTCPTrainModelManager implements ModelManager {
 	@Override
 	public SyncLoggerHandler getLoggerHandler() {
 		return rtcpTrain.getLoggerHandler();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SyncRotateAxisModel getMeasureRotateModel() {
+		return rtcpTrain.getMeasureRotateModel();
 	}
 
 	/**

@@ -9,9 +9,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.dwarfeng.rtcptrain.model.DefaultRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.RTCPParamModel;
+
 public class DefaultRTCPParamModelTest {
 
-	private static DefaultRTCPParamModel model;
+	private static RTCPParamModel model;
 	private static TestRTCPParamObverser obv;
 
 	@BeforeClass
