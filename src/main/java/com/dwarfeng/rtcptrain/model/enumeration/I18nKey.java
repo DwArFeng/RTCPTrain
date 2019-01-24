@@ -39,6 +39,31 @@ public enum I18nKey implements Name {
 	LOGGER_27("logger.27"), //
 	LOGGER_28("logger.28"), //
 
+	LABEL_1("label.1"), //
+	LABEL_2("label.2"), //
+	LABEL_3("label.3"), //
+	LABEL_4("label.4"), //
+	LABEL_5("label.5"), //
+	LABEL_6("label.6"), //
+	LABEL_7("label.7"), //
+	LABEL_8("label.8"), //
+	LABEL_9("label.9"), //
+	LABEL_10("label.10"), //
+	LABEL_11("label.11"), //
+	LABEL_12("label.12"), //
+	LABEL_13("label.13"), //
+	LABEL_14("label.14"), //
+	LABEL_15("label.15"), //
+	LABEL_16("label.16"), //
+	LABEL_17("label.17"), //
+	LABEL_18("label.18"), //
+	LABEL_19("label.19"), //
+	LABEL_20("label.20"), //
+	LABEL_21("label.21"), //
+	LABEL_22("label.22"), //
+	LABEL_23("label.23"), //
+	LABEL_24("label.24"), //
+
 	;
 
 	private String name;

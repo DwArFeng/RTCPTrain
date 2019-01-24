@@ -22,6 +22,32 @@ public final class Constants {
 	/** 代表强制重置配置文件的命令行参数。 */
 	public static final String CLI_OPT_FLAG_CONFIG_FORCE_RESET = "r";
 
+	/*
+	 * 以下参数代表基准回转轴参数设置的动作索引，保证各数据互不相同
+	 */
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_DATAUM_ROTATE_AXIS_A = 12450;
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_DATAUM_ROTATE_AXIS_C = -12450;
+
+	/*
+	 * 以下参数代表测量回转轴参数设置的动作索引，保证各数据互不相同
+	 */
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_MEASURE_ROTATE_AXIS_A = 12450;
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_MEASURE_ROTATE_AXIS_C = -12450;
+
+	/*
+	 * 以下参数代表测量方向参数设置的动作索引，保证各数据互不相同
+	 */
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_MEASURE_DIRECTION_X = 0;
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_MEASURE_DIRECTION_Y = 1;
+	/** 动作索引。 */
+	public static final int ACTION_INDEX_MEASURE_DIRECTION_Z = 2;
+
 	private Constants() {
 		throw new IllegalStateException("禁止外部实例化。");
 	}

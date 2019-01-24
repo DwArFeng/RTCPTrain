@@ -67,4 +67,9 @@ public interface ModelManager {
 	 */
 	public SyncResourceHandler getResourceHandler();
 
+	/**
+	 * @return the measureErrorModel
+	 */
+	SyncReferenceModel<Double> getMeasureErrorModel();
+
 }

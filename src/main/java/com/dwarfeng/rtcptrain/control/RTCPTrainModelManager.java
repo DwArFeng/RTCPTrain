@@ -86,6 +86,14 @@ class RTCPTrainModelManager implements ModelManager {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public SyncReferenceModel<Double> getMeasureErrorModel() {
+		return rtcpTrain.getMeasureErrorModel();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SyncRotateAxisModel getMeasureRotateAxisModel() {
 		return rtcpTrain.getMeasureRotateAxisModel();
 	}

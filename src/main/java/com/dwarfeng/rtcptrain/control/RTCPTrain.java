@@ -94,7 +94,10 @@ public class RTCPTrain {
 			.syncRotateAxisModel(new DefaultRotateAxisModel());
 	/** 测量方向。 */
 	private final SyncReferenceModel<MeasureDirection> measureDirectionModel = ModelUtil
-			.syncReferenceModel(new DefaultReferenceModel<>());
+			.syncReferenceModel(new DefaultReferenceModel<>(MeasureDirection.X));
+	/** 测量误差。 */
+	private final SyncReferenceModel<Double> measureErrorModel = ModelUtil
+			.syncReferenceModel(new DefaultReferenceModel<>(new Double(0)));
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的退出代码。 */
@@ -255,6 +258,13 @@ public class RTCPTrain {
 	 */
 	SyncReferenceModel<MeasureDirection> getMeasureDirectionModel() {
 		return measureDirectionModel;
+	}
+
+	/**
+	 * @return the measureErrorModel
+	 */
+	SyncReferenceModel<Double> getMeasureErrorModel() {
+		return measureErrorModel;
 	}
 
 	/**

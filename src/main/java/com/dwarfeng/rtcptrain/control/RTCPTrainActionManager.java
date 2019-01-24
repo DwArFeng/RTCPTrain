@@ -23,6 +23,7 @@ import org.apache.commons.cli.ParseException;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
+import com.dwarfeng.dutil.basic.io.CT;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.SaveFailedException;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
@@ -773,6 +774,282 @@ class RTCPTrainActionManager implements ActionManager {
 	public void submit(Task task) throws NullPointerException {
 		Objects.requireNonNull(task, "入口参数 task 不能为 null。");
 		rtcpTrain.getBackground().submit(task);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV00(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV00(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV01(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV01(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV02(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV02(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV10(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV10(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV11(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV11(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV12(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV12(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV20(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV20(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV21(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV21(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV22(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV22(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV30(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV30(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV31(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV31(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamV32(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setV32(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCurrentRTCPParamToolLength(double newValue) {
+		rtcpTrain.getCurrentRTCPParamModel().setToolLength(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV00(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV00(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV01(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV01(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV02(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV02(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV10(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV10(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV11(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV11(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV12(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV12(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV20(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV20(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV21(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV21(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV22(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV22(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV30(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV30(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV31(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV31(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamV32(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setV32(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActualRTCPParamToolLength(double newValue) {
+		rtcpTrain.getActualRTCPParamModel().setToolLength(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setDatumRotateAxisA(double newValue) {
+		rtcpTrain.getDatumRotateAxisModel().setA(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setDatumRotateAxisC(double newValue) {
+		rtcpTrain.getDatumRotateAxisModel().setC(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMeasureRotateAxisA(double newValue) {
+		rtcpTrain.getMeasureRotateAxisModel().setA(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMeasureRotateAxisC(double newValue) {
+		rtcpTrain.getMeasureRotateAxisModel().setC(newValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setMeasureDirection(MeasureDirection direction) {
+		Objects.requireNonNull(direction, "入口参数 direction 不能为 null。");
+		rtcpTrain.getMeasureDirectionModel().set(direction);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void randomActualRTCPParam() {
+		// TODO Auto-generated method stub
+		CT.trace("randomActualRTCPParam");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void useExperience() {
+		// TODO Auto-generated method stub
+		CT.trace("useExperience");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void measureError() {
+		// TODO Auto-generated method stub
+		CT.trace("measureError");
 	}
 
 	// --------------------------------------------日志输出--------------------------------------------
