@@ -42,9 +42,12 @@ import com.dwarfeng.dutil.develop.setting.SettingUtil;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.dutil.develop.setting.io.PropSettingValueLoader;
 import com.dwarfeng.dutil.develop.setting.io.PropSettingValueSaver;
+import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
+import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
 import com.dwarfeng.rtcptrain.model.enumeration.CliSettingItem;
 import com.dwarfeng.rtcptrain.model.enumeration.CoreSettingItem;
 import com.dwarfeng.rtcptrain.model.enumeration.I18nKey;
+import com.dwarfeng.rtcptrain.model.enumeration.MeasureDirection;
 import com.dwarfeng.rtcptrain.model.enumeration.ModalSettingItem;
 import com.dwarfeng.rtcptrain.model.enumeration.ResourceKey;
 import com.dwarfeng.rtcptrain.util.Constants;
@@ -345,13 +348,163 @@ class RTCPTrainActionManager implements ActionManager {
 	}
 
 	private void applyModalSetting() {
+		info(I18nKey.LOGGER_27);
+
 		SyncSettingHandler modalSettingHandler = rtcpTrain.getModalSettingHandler();
+		SyncRTCPParamModel currentRTCPParamModel = rtcpTrain.getCurrentRTCPParamModel();
+		SyncRTCPParamModel actualRTCPParamModel = rtcpTrain.getActualRTCPParamModel();
+		SyncRotateAxisModel datumRotateAxisModel = rtcpTrain.getDatumRotateAxisModel();
+		SyncRotateAxisModel measureRotateAxisModel = rtcpTrain.getMeasureRotateAxisModel();
+		SyncReferenceModel<MeasureDirection> measureDirectionModel = rtcpTrain.getMeasureDirectionModel();
+
+		double currentV00, currentV01, currentV02;
+		double currentV10, currentV11, currentV12;
+		double currentV20, currentV21, currentV22;
+		double currentV30, currentV31, currentV32;
+		double currentToolLength;
+
+		double actualV00, actualV01, actualV02;
+		double actualV10, actualV11, actualV12;
+		double actualV20, actualV21, actualV22;
+		double actualV30, actualV31, actualV32;
+		double actualToolLength;
+
+		double datumRotateAxisA, datumRotateAxisC;
+		double measureRotateAxisA, measureRotateAxisC;
+
+		String measureDirection;
 
 		modalSettingHandler.getLock().readLock().lock();
 		try {
-			// Something to do.
+			currentV00 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V00,
+					Double.class);
+			currentV01 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V01,
+					Double.class);
+			currentV02 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V02,
+					Double.class);
+			currentV10 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V10,
+					Double.class);
+			currentV11 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V11,
+					Double.class);
+			currentV12 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V12,
+					Double.class);
+			currentV20 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V20,
+					Double.class);
+			currentV21 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V21,
+					Double.class);
+			currentV22 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V22,
+					Double.class);
+			currentV30 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V30,
+					Double.class);
+			currentV31 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V31,
+					Double.class);
+			currentV32 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V32,
+					Double.class);
+			currentToolLength = modalSettingHandler
+					.getParsedValidValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_TOOL_LENGTH, Double.class);
+			actualV00 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V00,
+					Double.class);
+			actualV01 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V01,
+					Double.class);
+			actualV02 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V02,
+					Double.class);
+			actualV10 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V10,
+					Double.class);
+			actualV11 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V11,
+					Double.class);
+			actualV12 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V12,
+					Double.class);
+			actualV20 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V20,
+					Double.class);
+			actualV21 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V21,
+					Double.class);
+			actualV22 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V22,
+					Double.class);
+			actualV30 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V30,
+					Double.class);
+			actualV31 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V31,
+					Double.class);
+			actualV32 = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V32,
+					Double.class);
+			actualToolLength = modalSettingHandler
+					.getParsedValidValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_TOOL_LENGTH, Double.class);
+			datumRotateAxisA = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_DATUM_ROTATE_AXIS_A,
+					Double.class);
+			datumRotateAxisC = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_DATUM_ROTATE_AXIS_C,
+					Double.class);
+			measureRotateAxisA = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_MEASURE_ROTATE_AXIS_A,
+					Double.class);
+			measureRotateAxisC = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_MEASURE_ROTATE_AXIS_C,
+					Double.class);
+			measureDirection = modalSettingHandler.getParsedValidValue(ModalSettingItem.VALUE_MEASURE_DIRECTION,
+					String.class);
 		} finally {
 			modalSettingHandler.getLock().readLock().unlock();
+		}
+
+		currentRTCPParamModel.getLock().writeLock().lock();
+		try {
+			currentRTCPParamModel.setV00(currentV00);
+			currentRTCPParamModel.setV01(currentV01);
+			currentRTCPParamModel.setV02(currentV02);
+			currentRTCPParamModel.setV10(currentV10);
+			currentRTCPParamModel.setV11(currentV11);
+			currentRTCPParamModel.setV12(currentV12);
+			currentRTCPParamModel.setV20(currentV20);
+			currentRTCPParamModel.setV21(currentV21);
+			currentRTCPParamModel.setV22(currentV22);
+			currentRTCPParamModel.setV30(currentV30);
+			currentRTCPParamModel.setV31(currentV31);
+			currentRTCPParamModel.setV32(currentV32);
+			currentRTCPParamModel.setToolLength(currentToolLength);
+		} finally {
+			currentRTCPParamModel.getLock().writeLock().unlock();
+		}
+
+		actualRTCPParamModel.getLock().writeLock().lock();
+		try {
+			actualRTCPParamModel.setV00(actualV00);
+			actualRTCPParamModel.setV01(actualV01);
+			actualRTCPParamModel.setV02(actualV02);
+			actualRTCPParamModel.setV10(actualV10);
+			actualRTCPParamModel.setV11(actualV11);
+			actualRTCPParamModel.setV12(actualV12);
+			actualRTCPParamModel.setV20(actualV20);
+			actualRTCPParamModel.setV21(actualV21);
+			actualRTCPParamModel.setV22(actualV22);
+			actualRTCPParamModel.setV30(actualV30);
+			actualRTCPParamModel.setV31(actualV31);
+			actualRTCPParamModel.setV32(actualV32);
+			actualRTCPParamModel.setToolLength(actualToolLength);
+		} finally {
+			actualRTCPParamModel.getLock().writeLock().unlock();
+		}
+
+		datumRotateAxisModel.getLock().writeLock().lock();
+		try {
+			datumRotateAxisModel.setA(datumRotateAxisA);
+			datumRotateAxisModel.setC(datumRotateAxisC);
+		} finally {
+			datumRotateAxisModel.getLock().writeLock().unlock();
+		}
+
+		measureRotateAxisModel.getLock().writeLock().lock();
+		try {
+			measureRotateAxisModel.setA(measureRotateAxisA);
+			measureRotateAxisModel.setC(measureRotateAxisC);
+		} finally {
+			measureRotateAxisModel.getLock().writeLock().unlock();
+		}
+
+		measureDirectionModel.getLock().writeLock().lock();
+		try {
+			try {
+				measureDirectionModel.set(MeasureDirection.valueOf(measureDirection));
+			} catch (Exception e) {
+				measureDirectionModel.set(MeasureDirection.X);
+			}
+		} finally {
+			measureDirectionModel.getLock().writeLock().unlock();
 		}
 
 	}
@@ -400,7 +553,9 @@ class RTCPTrainActionManager implements ActionManager {
 	}
 
 	private void saveConfig() {
-		// 加载模态配置。
+		// 设置模态配置
+		setModalSettingHandler();
+		// 保存模态配置。
 		saveModalSettingHandler();
 	}
 
@@ -412,6 +567,133 @@ class RTCPTrainActionManager implements ActionManager {
 			formatWarn(I18nKey.LOGGER_22, e, resourceKey.getName());
 			resource.reset();
 			return resource.openOutputStream();
+		}
+	}
+
+	private void setModalSettingHandler() {
+		info(I18nKey.LOGGER_28);
+
+		SyncSettingHandler modalSettingHandler = rtcpTrain.getModalSettingHandler();
+		SyncRTCPParamModel currentRTCPParamModel = rtcpTrain.getCurrentRTCPParamModel();
+		SyncRTCPParamModel actualRTCPParamModel = rtcpTrain.getActualRTCPParamModel();
+		SyncRotateAxisModel datumRotateAxisModel = rtcpTrain.getDatumRotateAxisModel();
+		SyncRotateAxisModel measureRotateAxisModel = rtcpTrain.getMeasureRotateAxisModel();
+		SyncReferenceModel<MeasureDirection> measureDirectionModel = rtcpTrain.getMeasureDirectionModel();
+
+		double currentV00, currentV01, currentV02;
+		double currentV10, currentV11, currentV12;
+		double currentV20, currentV21, currentV22;
+		double currentV30, currentV31, currentV32;
+		double currentToolLength;
+
+		double actualV00, actualV01, actualV02;
+		double actualV10, actualV11, actualV12;
+		double actualV20, actualV21, actualV22;
+		double actualV30, actualV31, actualV32;
+		double actualToolLength;
+
+		double datumRotateAxisA, datumRotateAxisC;
+		double measureRotateAxisA, measureRotateAxisC;
+
+		String measureDirection;
+
+		currentRTCPParamModel.getLock().readLock().lock();
+		try {
+			currentV00 = currentRTCPParamModel.getV00();
+			currentV01 = currentRTCPParamModel.getV01();
+			currentV02 = currentRTCPParamModel.getV02();
+			currentV10 = currentRTCPParamModel.getV10();
+			currentV11 = currentRTCPParamModel.getV11();
+			currentV12 = currentRTCPParamModel.getV12();
+			currentV20 = currentRTCPParamModel.getV20();
+			currentV21 = currentRTCPParamModel.getV21();
+			currentV22 = currentRTCPParamModel.getV22();
+			currentV30 = currentRTCPParamModel.getV30();
+			currentV31 = currentRTCPParamModel.getV31();
+			currentV32 = currentRTCPParamModel.getV32();
+			currentToolLength = currentRTCPParamModel.getToolLength();
+		} finally {
+			currentRTCPParamModel.getLock().readLock().unlock();
+		}
+
+		actualRTCPParamModel.getLock().readLock().lock();
+		try {
+			actualV00 = actualRTCPParamModel.getV00();
+			actualV01 = actualRTCPParamModel.getV01();
+			actualV02 = actualRTCPParamModel.getV02();
+			actualV10 = actualRTCPParamModel.getV10();
+			actualV11 = actualRTCPParamModel.getV11();
+			actualV12 = actualRTCPParamModel.getV12();
+			actualV20 = actualRTCPParamModel.getV20();
+			actualV21 = actualRTCPParamModel.getV21();
+			actualV22 = actualRTCPParamModel.getV22();
+			actualV30 = actualRTCPParamModel.getV30();
+			actualV31 = actualRTCPParamModel.getV31();
+			actualV32 = actualRTCPParamModel.getV32();
+			actualToolLength = actualRTCPParamModel.getToolLength();
+		} finally {
+			actualRTCPParamModel.getLock().readLock().unlock();
+		}
+
+		datumRotateAxisModel.getLock().readLock().lock();
+		try {
+			datumRotateAxisA = datumRotateAxisModel.getA();
+			datumRotateAxisC = datumRotateAxisModel.getC();
+		} finally {
+			datumRotateAxisModel.getLock().readLock().unlock();
+		}
+
+		measureRotateAxisModel.getLock().readLock().lock();
+		try {
+			measureRotateAxisA = measureRotateAxisModel.getA();
+			measureRotateAxisC = measureRotateAxisModel.getC();
+		} finally {
+			measureRotateAxisModel.getLock().readLock().unlock();
+		}
+
+		measureDirectionModel.getLock().readLock().lock();
+		try {
+			measureDirection = measureDirectionModel.get().name();
+		} finally {
+			measureDirectionModel.getLock().readLock().unlock();
+		}
+
+		modalSettingHandler.getLock().writeLock().lock();
+		try {
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V00, currentV00);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V01, currentV01);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V02, currentV02);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V10, currentV10);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V11, currentV11);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V12, currentV12);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V20, currentV20);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V21, currentV21);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V22, currentV22);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V30, currentV30);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V31, currentV31);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_V32, currentV32);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_CURRENT_RTCP_PARAM_TOOL_LENGTH,
+					currentToolLength);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V00, actualV00);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V01, actualV01);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V02, actualV02);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V10, actualV10);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V11, actualV11);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V12, actualV12);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V20, actualV20);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V21, actualV21);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V22, actualV22);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V30, actualV30);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V31, actualV31);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_V32, actualV32);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_ACTUAL_RTCP_PARAM_TOOL_LENGTH, actualToolLength);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_DATUM_ROTATE_AXIS_A, datumRotateAxisA);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_DATUM_ROTATE_AXIS_C, datumRotateAxisC);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_MEASURE_ROTATE_AXIS_A, measureRotateAxisA);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_MEASURE_ROTATE_AXIS_C, measureRotateAxisC);
+			modalSettingHandler.setParsedValue(ModalSettingItem.VALUE_MEASURE_DIRECTION, measureDirection);
+		} finally {
+			modalSettingHandler.getLock().writeLock().unlock();
 		}
 	}
 

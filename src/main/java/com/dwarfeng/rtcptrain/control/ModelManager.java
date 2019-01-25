@@ -55,7 +55,7 @@ public interface ModelManager {
 	/**
 	 * @return the measureRotateModel
 	 */
-	public SyncRotateAxisModel getMeasureRotateModel();
+	public SyncRotateAxisModel getMeasureRotateAxisModel();
 
 	/**
 	 * @return the modalSettingHandler

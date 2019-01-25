@@ -2,6 +2,7 @@ package com.dwarfeng.rtcptrain.control;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Executors;
@@ -65,9 +66,11 @@ public class RTCPTrain {
 			Executors.newFixedThreadPool(4, ExecutorServiceBackground.THREAD_FACTORY),
 			Collections.newSetFromMap(new WeakHashMap<>()));
 	/** 核心配置模型。 */
-	private final SyncSettingHandler coreSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
+	private final SyncSettingHandler coreSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler(
+			new LinkedHashMap<>(), new LinkedHashMap<>(), Collections.newSetFromMap(new WeakHashMap<>())));
 	/** 模态配置模型。 */
-	private final SyncSettingHandler modalSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
+	private final SyncSettingHandler modalSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler(
+			new LinkedHashMap<>(), new LinkedHashMap<>(), Collections.newSetFromMap(new WeakHashMap<>())));
 	/** 命令行配置模型。 */
 	private final SyncSettingHandler cliSettingHandler = SettingUtil.syncSettingHandler(new DefaultSettingHandler());
 	/** 记录器接口。 */
@@ -87,7 +90,7 @@ public class RTCPTrain {
 	private final SyncRotateAxisModel datumRotateAxisModel = com.dwarfeng.rtcptrain.util.ModelUtil
 			.syncRotateAxisModel(new DefaultRotateAxisModel());
 	/** 测量回转轴。 */
-	private final SyncRotateAxisModel measureRotateModel = com.dwarfeng.rtcptrain.util.ModelUtil
+	private final SyncRotateAxisModel measureRotateAxisModel = com.dwarfeng.rtcptrain.util.ModelUtil
 			.syncRotateAxisModel(new DefaultRotateAxisModel());
 	/** 测量方向。 */
 	private final SyncReferenceModel<MeasureDirection> measureDirectionModel = ModelUtil
@@ -255,10 +258,10 @@ public class RTCPTrain {
 	}
 
 	/**
-	 * @return the measureRotateModel
+	 * @return the measureRotateAxisModel
 	 */
-	SyncRotateAxisModel getMeasureRotateModel() {
-		return measureRotateModel;
+	SyncRotateAxisModel getMeasureRotateAxisModel() {
+		return measureRotateAxisModel;
 	}
 
 	/**
