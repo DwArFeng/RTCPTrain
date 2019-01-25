@@ -35,6 +35,7 @@ import com.dwarfeng.rtcptrain.model.DefaultRTCPParamModel;
 import com.dwarfeng.rtcptrain.model.DefaultRotateAxisModel;
 import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
 import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
+import com.dwarfeng.rtcptrain.model.enumeration.MeasureDirection;
 import com.dwarfeng.rtcptrain.view.MainFrame;
 
 /**
@@ -88,6 +89,9 @@ public class RTCPTrain {
 	/** 测量回转轴。 */
 	private final SyncRotateAxisModel measureRotateModel = com.dwarfeng.rtcptrain.util.ModelUtil
 			.syncRotateAxisModel(new DefaultRotateAxisModel());
+	/** 测量方向。 */
+	private final SyncReferenceModel<MeasureDirection> measureDirectionModel = ModelUtil
+			.syncReferenceModel(new DefaultReferenceModel<>());
 
 	// --------------------------------------------控制--------------------------------------------
 	/** 程序的退出代码。 */
@@ -221,8 +225,6 @@ public class RTCPTrain {
 	SyncReferenceModel<Integer> getExitCodeRef() {
 		return exitCodeRef;
 	}
-	
-	
 
 	/**
 	 * @return the i18nHandler
@@ -243,6 +245,13 @@ public class RTCPTrain {
 	 */
 	SyncReferenceModel<MainFrame> getMainFrameRef() {
 		return mainFrameRef;
+	}
+
+	/**
+	 * @return the measureDirectionModel
+	 */
+	SyncReferenceModel<MeasureDirection> getMeasureDirectionModel() {
+		return measureDirectionModel;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.dwarfeng.rtcptrain.control;
 
+import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.develop.backgr.Background;
 import com.dwarfeng.dutil.develop.i18n.SyncI18nHandler;
 import com.dwarfeng.dutil.develop.logger.SyncLoggerHandler;
@@ -7,6 +8,7 @@ import com.dwarfeng.dutil.develop.resource.SyncResourceHandler;
 import com.dwarfeng.dutil.develop.setting.SyncSettingHandler;
 import com.dwarfeng.rtcptrain.model.SyncRTCPParamModel;
 import com.dwarfeng.rtcptrain.model.SyncRotateAxisModel;
+import com.dwarfeng.rtcptrain.model.enumeration.MeasureDirection;
 
 public interface ModelManager {
 
@@ -44,6 +46,11 @@ public interface ModelManager {
 	 * @return the loggerHandler
 	 */
 	public SyncLoggerHandler getLoggerHandler();
+
+	/**
+	 * @return the measureDirectionModel
+	 */
+	public SyncReferenceModel<MeasureDirection> getMeasureDirectionModel();
 
 	/**
 	 * @return the measureRotateModel
