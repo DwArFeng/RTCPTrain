@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -26,6 +27,8 @@ import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
 import com.dwarfeng.dutil.basic.io.CT;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.SaveFailedException;
+import com.dwarfeng.dutil.basic.num.NumberUtil;
+import com.dwarfeng.dutil.basic.num.unit.Angle;
 import com.dwarfeng.dutil.basic.prog.RuntimeState;
 import com.dwarfeng.dutil.develop.backgr.Background;
 import com.dwarfeng.dutil.develop.backgr.Task;
@@ -52,6 +55,7 @@ import com.dwarfeng.rtcptrain.model.enumeration.MeasureDirection;
 import com.dwarfeng.rtcptrain.model.enumeration.ModalSettingItem;
 import com.dwarfeng.rtcptrain.model.enumeration.ResourceKey;
 import com.dwarfeng.rtcptrain.util.Constants;
+import com.dwarfeng.rtcptrain.util.TransformUtil;
 import com.dwarfeng.rtcptrain.view.MainFrame;
 
 class RTCPTrainActionManager implements ActionManager {
@@ -1048,8 +1052,108 @@ class RTCPTrainActionManager implements ActionManager {
 	 */
 	@Override
 	public void measureError() {
-		// TODO Auto-generated method stub
-		CT.trace("measureError");
+		SyncRTCPParamModel actualRTCPParamModel = rtcpTrain.getActualRTCPParamModel();
+		SyncRTCPParamModel currentRTCPParamModel = rtcpTrain.getCurrentRTCPParamModel();
+		SyncRotateAxisModel datumRotateAxisModel = rtcpTrain.getDatumRotateAxisModel();
+		SyncRotateAxisModel measureRotateAxisModel = rtcpTrain.getMeasureRotateAxisModel();
+		SyncReferenceModel<MeasureDirection> measureDirectionModel = rtcpTrain.getMeasureDirectionModel();
+		SyncReferenceModel<Double> measureErrorModel = rtcpTrain.getMeasureErrorModel();
+
+		double acV00, acV01, acV02;
+		double acV10, acV11, acV12;
+		double acV20, acV21, acV22;
+		double acV30, acV31, acV32;
+		double cuV00, cuV01, cuV02;
+		double cuV10, cuV11, cuV12;
+		double cuV20, cuV21, cuV22;
+		double cuV30, cuV31, cuV32;
+		double datumA, datumC, a, c;
+		double acL, cuL;
+		MeasureDirection measureDirection;
+
+		actualRTCPParamModel.getLock().readLock().lock();
+		try {
+			acV00 = actualRTCPParamModel.getV00();
+			acV01 = actualRTCPParamModel.getV01();
+			acV02 = actualRTCPParamModel.getV02();
+			acV10 = actualRTCPParamModel.getV10();
+			acV11 = actualRTCPParamModel.getV11();
+			acV12 = actualRTCPParamModel.getV12();
+			acV20 = actualRTCPParamModel.getV20();
+			acV21 = actualRTCPParamModel.getV21();
+			acV22 = actualRTCPParamModel.getV22();
+			acV30 = actualRTCPParamModel.getV30();
+			acV31 = actualRTCPParamModel.getV31();
+			acV32 = actualRTCPParamModel.getV32();
+			acL = actualRTCPParamModel.getToolLength();
+		} finally {
+			actualRTCPParamModel.getLock().readLock().unlock();
+		}
+
+		currentRTCPParamModel.getLock().readLock().lock();
+		try {
+			cuV00 = currentRTCPParamModel.getV00();
+			cuV01 = currentRTCPParamModel.getV01();
+			cuV02 = currentRTCPParamModel.getV02();
+			cuV10 = currentRTCPParamModel.getV10();
+			cuV11 = currentRTCPParamModel.getV11();
+			cuV12 = currentRTCPParamModel.getV12();
+			cuV20 = currentRTCPParamModel.getV20();
+			cuV21 = currentRTCPParamModel.getV21();
+			cuV22 = currentRTCPParamModel.getV22();
+			cuV30 = currentRTCPParamModel.getV30();
+			cuV31 = currentRTCPParamModel.getV31();
+			cuV32 = currentRTCPParamModel.getV32();
+			cuL = currentRTCPParamModel.getToolLength();
+		} finally {
+			currentRTCPParamModel.getLock().readLock().unlock();
+		}
+
+		datumRotateAxisModel.getLock().readLock().lock();
+		try {
+			datumA = datumRotateAxisModel.getA();
+			datumC = datumRotateAxisModel.getC();
+		} finally {
+			datumRotateAxisModel.getLock().readLock().unlock();
+		}
+
+		measureRotateAxisModel.getLock().readLock().lock();
+		try {
+			a = measureRotateAxisModel.getA();
+			c = measureRotateAxisModel.getC();
+		} finally {
+			measureRotateAxisModel.getLock().readLock().unlock();
+		}
+
+		measureDirectionModel.getLock().readLock().lock();
+		try {
+			measureDirection = Optional.ofNullable(measureDirectionModel.get()).orElse(MeasureDirection.X);
+		} finally {
+			measureDirectionModel.getLock().readLock().unlock();
+		}
+
+		if (TransformUtil.norm(acV00, acV01, acV02) == 0 || TransformUtil.norm(acV20, acV21, acV22) == 0
+				|| TransformUtil.norm(cuV00, cuV01, cuV02) == 0 || TransformUtil.norm(cuV20, cuV21, cuV22) == 0) {
+			warn(I18nKey.LOGGER_30);
+			return;
+		}
+
+		double measureError = TransformUtil
+				.rtcpError(acV00, acV01, acV02, acV10, acV11, acV12, acV20, acV21, acV22, acV30, acV31, acV32, cuV00,
+						cuV01, cuV02, cuV10, cuV11, cuV12, cuV20, cuV21, cuV22, cuV30, cuV31, cuV32,
+						NumberUtil.unitTrans(datumA, Angle.DEG, Angle.RAD).doubleValue(),
+						NumberUtil.unitTrans(datumC, Angle.DEG, Angle.RAD).doubleValue(),
+						NumberUtil.unitTrans(a, Angle.DEG, Angle.RAD).doubleValue(),
+						NumberUtil.unitTrans(c, Angle.DEG, Angle.RAD).doubleValue(), acL, cuL)
+				.get(measureDirection.getIndex(), 0);
+		formatInfo(I18nKey.LOGGER_29, datumA, datumC, a, c, measureDirection.name(), measureError);
+
+		measureErrorModel.getLock().writeLock().lock();
+		try {
+			measureErrorModel.set(measureError);
+		} finally {
+			measureErrorModel.getLock().writeLock().unlock();
+		}
 	}
 
 	// --------------------------------------------日志输出--------------------------------------------
@@ -1107,7 +1211,6 @@ class RTCPTrainActionManager implements ActionManager {
 		rtcpTrain.getLoggerHandler().warn(message);
 	}
 
-	@SuppressWarnings("unused")
 	private void warn(I18nKey key) throws NullPointerException {
 		warn(rtcpTrain.getI18nHandler().getStringOrDefault(key, Constants.MISSING_LABEL));
 	}

@@ -7,9 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.dwarfeng.dutil.develop.setting.AbstractSettingInfo;
 import com.dwarfeng.dutil.develop.setting.SettingEnumItem;
 import com.dwarfeng.dutil.develop.setting.SettingInfo;
-import com.dwarfeng.dutil.develop.setting.info.BooleanSettingInfo;
 import com.dwarfeng.dutil.develop.setting.info.LocaleSettingInfo;
-import com.dwarfeng.dutil.develop.setting.info.StringSettingInfo;
 
 /**
  * 核心设置条目。

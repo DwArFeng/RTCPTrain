@@ -721,8 +721,9 @@ public class MainFrame extends JFrame {
 	 */
 	public MainFrame(ModelManager modelManager, ActionManager actionManager) {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
+		setBounds(100, 100, 600, 800);
 		addWindowListener(new WindowAdapter() {
+
 			@Override
 			public void windowClosing(WindowEvent e) {
 				checkManagerAndDo(() -> {
@@ -747,15 +748,212 @@ public class MainFrame extends JFrame {
 		adjustableBorderPanel.setSeperatorThickness(5);
 		adjustableBorderPanel.setEastEnabled(true);
 		contentPane.add(adjustableBorderPanel, BorderLayout.CENTER);
+		crTableModel.addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getColumn() == 0 || crAdjustFlag)
+					return;
+				int index = e.getFirstRow() * 10 + (e.getColumn() - 1);
+				double newValue = (double) crTableModel.getValueAt(e.getFirstRow(), e.getColumn());
+				crDuplexingForecast.add(new Object[] { index, newValue });
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager.submit(
+							new SetCrTask(MainFrame.this.modelManager, MainFrame.this.actionManager, index, newValue));
+				});
+			}
+		});
+
+		meaDirectionGroup = new ButtonGroup();
+		sysIn = System.in;
+		sysOut = System.out;
+		sysErr = System.err;
+
+		JPanel panel_2 = new JPanel();
+		adjustableBorderPanel.add(panel_2, BorderLayout.EAST);
+		GridBagLayout gbl_panel_2 = new GridBagLayout();
+		gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_2.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_2.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		panel_2.setLayout(gbl_panel_2);
+
+		lblBanner10 = new JLabel();
+		GridBagConstraints gbc_lblBanner10 = new GridBagConstraints();
+		gbc_lblBanner10.gridwidth = 4;
+		gbc_lblBanner10.anchor = GridBagConstraints.WEST;
+		gbc_lblBanner10.insets = new Insets(0, 0, 5, 0);
+		gbc_lblBanner10.gridx = 0;
+		gbc_lblBanner10.gridy = 0;
+		panel_2.add(lblBanner10, gbc_lblBanner10);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+		gbc_scrollPane_1.gridwidth = 4;
+		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
+		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_1.gridx = 0;
+		gbc_scrollPane_1.gridy = 1;
+		panel_2.add(scrollPane_1, gbc_scrollPane_1);
+
+		acTable = new JTable();
+		acTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		acTable.getTableHeader().setReorderingAllowed(false);
+		acTable.setFillsViewportHeight(true);
+		acTable.setModel(acTableModel);
+		acTable.getColumnModel().getColumn(1).setCellEditor(rtcpParamCellEditor);
+		acTable.getColumnModel().getColumn(2).setCellEditor(rtcpParamCellEditor);
+		acTable.getColumnModel().getColumn(3).setCellEditor(rtcpParamCellEditor);
+		acTable.setRowHeight(32);
+		acTableModel.addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getColumn() == 0 || acAdjustFlag)
+					return;
+				int index = e.getFirstRow() * 10 + (e.getColumn() - 1);
+				double newValue = (double) acTableModel.getValueAt(e.getFirstRow(), e.getColumn());
+				acDuplexingForecast.add(new Object[] { index, newValue });
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager.submit(
+							new SetAcTask(MainFrame.this.modelManager, MainFrame.this.actionManager, index, newValue));
+				});
+			}
+		});
+		scrollPane_1.setViewportView(acTable);
+
+		lblBanner13 = new JLabel();
+		GridBagConstraints gbc_lblBanner13 = new GridBagConstraints();
+		gbc_lblBanner13.insets = new Insets(0, 0, 0, 5);
+		gbc_lblBanner13.gridx = 0;
+		gbc_lblBanner13.gridy = 2;
+		panel_2.add(lblBanner13, gbc_lblBanner13);
+
+		acToolLengthSpinner = new JPreciseSpinner();
+		acToolLengthSpinner.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		acToolLengthSpinner.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (acAdjustFlag)
+					return;
+				double newValue = (double) acToolLengthSpinner.getValue();
+				acDuplexingForecast.add(new Object[] { 150, newValue });
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager.submit(
+							new SetAcTask(MainFrame.this.modelManager, MainFrame.this.actionManager, 150, newValue));
+				});
+			}
+		});
+		GridBagConstraints gbc_acToolLengthSpinner = new GridBagConstraints();
+		gbc_acToolLengthSpinner.fill = GridBagConstraints.BOTH;
+		gbc_acToolLengthSpinner.gridwidth = 3;
+		gbc_acToolLengthSpinner.gridx = 1;
+		gbc_acToolLengthSpinner.gridy = 2;
+		panel_2.add(acToolLengthSpinner, gbc_acToolLengthSpinner);
+
+		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		adjustableBorderPanel.add(panel_3, BorderLayout.WEST);
+		GridBagLayout gbl_panel_3 = new GridBagLayout();
+		gbl_panel_3.columnWidths = new int[] { 0, 0 };
+		gbl_panel_3.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_panel_3.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		panel_3.setLayout(gbl_panel_3);
+
+		lblBanner14 = new JLabel();
+		GridBagConstraints gbc_lblBanner14 = new GridBagConstraints();
+		gbc_lblBanner14.insets = new Insets(0, 0, 5, 0);
+		gbc_lblBanner14.anchor = GridBagConstraints.WEST;
+		gbc_lblBanner14.gridx = 0;
+		gbc_lblBanner14.gridy = 0;
+		panel_3.add(lblBanner14, gbc_lblBanner14);
+
+		btnRandomAc = new JButton();
+		btnRandomAc.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager
+							.submit(new RandomAcTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
+				});
+			}
+		});
+		GridBagConstraints gbc_btnRandomAc = new GridBagConstraints();
+		gbc_btnRandomAc.insets = new Insets(0, 0, 5, 0);
+		gbc_btnRandomAc.fill = GridBagConstraints.BOTH;
+		gbc_btnRandomAc.gridx = 0;
+		gbc_btnRandomAc.gridy = 2;
+		panel_3.add(btnRandomAc, gbc_btnRandomAc);
+
+		btnMeasure = new JButton();
+		btnMeasure.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager
+							.submit(new MeasureTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
+				});
+			}
+		});
+		GridBagConstraints gbc_btnMeasure = new GridBagConstraints();
+		gbc_btnMeasure.fill = GridBagConstraints.BOTH;
+		gbc_btnMeasure.insets = new Insets(0, 0, 5, 0);
+		gbc_btnMeasure.gridx = 0;
+		gbc_btnMeasure.gridy = 3;
+		panel_3.add(btnMeasure, gbc_btnMeasure);
+
+		btnShowAc = new JToggleButton();
+		adjustableBorderPanel.setEastVisible(btnShowAc.isSelected());
+		btnShowAc.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				adjustableBorderPanel.setEastVisible(btnShowAc.isSelected());
+			}
+		});
+
+		btnUseExperience = new JButton("New button");
+		btnUseExperience.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager
+							.submit(new UseExperienceTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
+				});
+			}
+		});
+		GridBagConstraints gbc_btnUseExperience = new GridBagConstraints();
+		gbc_btnUseExperience.fill = GridBagConstraints.BOTH;
+		gbc_btnUseExperience.insets = new Insets(0, 0, 5, 0);
+		gbc_btnUseExperience.gridx = 0;
+		gbc_btnUseExperience.gridy = 4;
+		panel_3.add(btnUseExperience, gbc_btnUseExperience);
+		GridBagConstraints gbc_btnShowAc = new GridBagConstraints();
+		gbc_btnShowAc.insets = new Insets(0, 0, 5, 0);
+		gbc_btnShowAc.fill = GridBagConstraints.BOTH;
+		gbc_btnShowAc.gridx = 0;
+		gbc_btnShowAc.gridy = 5;
+		panel_3.add(btnShowAc, gbc_btnShowAc);
+
+		JAdjustableBorderPanel adjustableBorderPanel_1 = new JAdjustableBorderPanel();
+		adjustableBorderPanel_1.setSouthPreferredValue(300);
+		adjustableBorderPanel_1.setSeperatorThickness(5);
+		adjustableBorderPanel_1.setSouthVisible(true);
+		adjustableBorderPanel_1.setSouthEnabled(true);
+		adjustableBorderPanel.add(adjustableBorderPanel_1, BorderLayout.CENTER);
 
 		JPanel panel = new JPanel();
-		adjustableBorderPanel.add(panel, BorderLayout.CENTER);
+		adjustableBorderPanel_1.add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-				Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
 		lblBanner9 = new JLabel();
@@ -785,20 +983,6 @@ public class MainFrame extends JFrame {
 		crTable.getColumnModel().getColumn(2).setCellEditor(rtcpParamCellEditor);
 		crTable.getColumnModel().getColumn(3).setCellEditor(rtcpParamCellEditor);
 		crTable.setRowHeight(32);
-		crTableModel.addTableModelListener(new TableModelListener() {
-			@Override
-			public void tableChanged(TableModelEvent e) {
-				if (e.getColumn() == 0 || crAdjustFlag)
-					return;
-				int index = e.getFirstRow() * 10 + (e.getColumn() - 1);
-				double newValue = (double) crTableModel.getValueAt(e.getFirstRow(), e.getColumn());
-				crDuplexingForecast.add(new Object[] { index, newValue });
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager.submit(
-							new SetCrTask(MainFrame.this.modelManager, MainFrame.this.actionManager, index, newValue));
-				});
-			}
-		});
 		scrollPane.setViewportView(crTable);
 
 		lblBanner12 = new JLabel();
@@ -808,9 +992,10 @@ public class MainFrame extends JFrame {
 		gbc_lblBanner12.gridy = 2;
 		panel.add(lblBanner12, gbc_lblBanner12);
 
-		crToolLengthSpinner = new JSpinner();
+		crToolLengthSpinner = new JPreciseSpinner();
 		crToolLengthSpinner.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		crToolLengthSpinner.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (crAdjustFlag)
@@ -834,7 +1019,7 @@ public class MainFrame extends JFrame {
 		lblBanner4 = new JLabel();
 		GridBagConstraints gbc_lblBanner4 = new GridBagConstraints();
 		gbc_lblBanner4.anchor = GridBagConstraints.WEST;
-		gbc_lblBanner4.insets = new Insets(0, 0, 5, 0);
+		gbc_lblBanner4.insets = new Insets(0, 0, 5, 5);
 		gbc_lblBanner4.gridx = 0;
 		gbc_lblBanner4.gridy = 3;
 		panel.add(lblBanner4, gbc_lblBanner4);
@@ -851,6 +1036,7 @@ public class MainFrame extends JFrame {
 
 		meaDirectionX = new JRadioButton();
 		meaDirectionX.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (meaDirAdjustFlag)
@@ -866,6 +1052,7 @@ public class MainFrame extends JFrame {
 
 		meaDirectionY = new JRadioButton();
 		meaDirectionY.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (meaDirAdjustFlag)
@@ -881,6 +1068,7 @@ public class MainFrame extends JFrame {
 
 		meaDirectionZ = new JRadioButton();
 		meaDirectionZ.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (meaDirAdjustFlag)
@@ -893,8 +1081,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 		panel_1.add(meaDirectionZ);
-
-		meaDirectionGroup = new ButtonGroup();
 		meaDirectionGroup.add(meaDirectionX);
 		meaDirectionGroup.add(meaDirectionY);
 		meaDirectionGroup.add(meaDirectionZ);
@@ -916,8 +1102,9 @@ public class MainFrame extends JFrame {
 		gbc_lblBanner2.gridy = 6;
 		panel.add(lblBanner2, gbc_lblBanner2);
 
-		datumASpinner = new JSpinner();
+		datumASpinner = new JPreciseSpinner();
 		datumASpinner.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (datumRaAdjustFlag)
@@ -946,8 +1133,9 @@ public class MainFrame extends JFrame {
 		gbc_lblBanner3.gridy = 6;
 		panel.add(lblBanner3, gbc_lblBanner3);
 
-		datumCSpinner = new JSpinner();
+		datumCSpinner = new JPreciseSpinner();
 		datumCSpinner.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (datumRaAdjustFlag)
@@ -985,8 +1173,9 @@ public class MainFrame extends JFrame {
 		gbc_lblBanner6.gridy = 8;
 		panel.add(lblBanner6, gbc_lblBanner6);
 
-		meaASpinner = new JSpinner();
+		meaASpinner = new JPreciseSpinner();
 		meaASpinner.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (meaRaAdjustFlag)
@@ -1015,8 +1204,9 @@ public class MainFrame extends JFrame {
 		gbc_lblBanner7.gridy = 8;
 		panel.add(lblBanner7, gbc_lblBanner7);
 
-		meaCSpinner = new JSpinner();
+		meaCSpinner = new JPreciseSpinner();
 		meaCSpinner.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (meaRaAdjustFlag)
@@ -1061,192 +1251,22 @@ public class MainFrame extends JFrame {
 		GridBagConstraints gbc_lblBanner11 = new GridBagConstraints();
 		gbc_lblBanner11.anchor = GridBagConstraints.WEST;
 		gbc_lblBanner11.gridwidth = 4;
-		gbc_lblBanner11.insets = new Insets(0, 0, 5, 5);
 		gbc_lblBanner11.gridx = 0;
 		gbc_lblBanner11.gridy = 10;
 		panel.add(lblBanner11, gbc_lblBanner11);
 
+		JPanel panel_4 = new JPanel();
+		adjustableBorderPanel_1.add(panel_4, BorderLayout.SOUTH);
+		panel_4.setLayout(new BorderLayout(0, 0));
+
 		JScrollPane scrollPane_2 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_2 = new GridBagConstraints();
-		gbc_scrollPane_2.gridwidth = 4;
-		gbc_scrollPane_2.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_2.gridx = 0;
-		gbc_scrollPane_2.gridy = 11;
-		panel.add(scrollPane_2, gbc_scrollPane_2);
+		panel_4.add(scrollPane_2, BorderLayout.CENTER);
 
 		exconsole = new JExconsole();
-		sysIn = System.in;
-		sysOut = System.out;
-		sysErr = System.err;
 		System.setIn(exconsole.in);
 		System.setOut(exconsole.out);
 		System.setErr(exconsole.out);
 		scrollPane_2.setViewportView(exconsole);
-
-		JPanel panel_2 = new JPanel();
-		adjustableBorderPanel.add(panel_2, BorderLayout.EAST);
-		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0 };
-		gbl_panel_2.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel_2.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
-		panel_2.setLayout(gbl_panel_2);
-
-		lblBanner10 = new JLabel();
-		GridBagConstraints gbc_lblBanner10 = new GridBagConstraints();
-		gbc_lblBanner10.gridwidth = 4;
-		gbc_lblBanner10.anchor = GridBagConstraints.WEST;
-		gbc_lblBanner10.insets = new Insets(0, 0, 5, 0);
-		gbc_lblBanner10.gridx = 0;
-		gbc_lblBanner10.gridy = 0;
-		panel_2.add(lblBanner10, gbc_lblBanner10);
-
-		JScrollPane scrollPane_1 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-		gbc_scrollPane_1.gridwidth = 4;
-		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
-		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_1.gridx = 0;
-		gbc_scrollPane_1.gridy = 1;
-		panel_2.add(scrollPane_1, gbc_scrollPane_1);
-
-		acTable = new JTable();
-		acTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		acTable.getTableHeader().setReorderingAllowed(false);
-		acTable.setFillsViewportHeight(true);
-		acTable.setModel(acTableModel);
-		acTable.getColumnModel().getColumn(1).setCellEditor(rtcpParamCellEditor);
-		acTable.getColumnModel().getColumn(2).setCellEditor(rtcpParamCellEditor);
-		acTable.getColumnModel().getColumn(3).setCellEditor(rtcpParamCellEditor);
-		acTable.setRowHeight(32);
-		acTableModel.addTableModelListener(new TableModelListener() {
-			@Override
-			public void tableChanged(TableModelEvent e) {
-				if (e.getColumn() == 0 || acAdjustFlag)
-					return;
-				int index = e.getFirstRow() * 10 + (e.getColumn() - 1);
-				double newValue = (double) acTableModel.getValueAt(e.getFirstRow(), e.getColumn());
-				acDuplexingForecast.add(new Object[] { index, newValue });
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager.submit(
-							new SetAcTask(MainFrame.this.modelManager, MainFrame.this.actionManager, index, newValue));
-				});
-			}
-		});
-		scrollPane_1.setViewportView(acTable);
-
-		lblBanner13 = new JLabel();
-		GridBagConstraints gbc_lblBanner13 = new GridBagConstraints();
-		gbc_lblBanner13.insets = new Insets(0, 0, 0, 5);
-		gbc_lblBanner13.gridx = 0;
-		gbc_lblBanner13.gridy = 2;
-		panel_2.add(lblBanner13, gbc_lblBanner13);
-
-		acToolLengthSpinner = new JSpinner();
-		acToolLengthSpinner.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
-		acToolLengthSpinner.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (acAdjustFlag)
-					return;
-				double newValue = (double) acToolLengthSpinner.getValue();
-				acDuplexingForecast.add(new Object[] { 150, newValue });
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager.submit(
-							new SetAcTask(MainFrame.this.modelManager, MainFrame.this.actionManager, 150, newValue));
-				});
-			}
-		});
-		GridBagConstraints gbc_acToolLengthSpinner = new GridBagConstraints();
-		gbc_acToolLengthSpinner.fill = GridBagConstraints.BOTH;
-		gbc_acToolLengthSpinner.gridwidth = 3;
-		gbc_acToolLengthSpinner.gridx = 1;
-		gbc_acToolLengthSpinner.gridy = 2;
-		panel_2.add(acToolLengthSpinner, gbc_acToolLengthSpinner);
-
-		JPanel panel_3 = new JPanel();
-		panel_3.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		adjustableBorderPanel.add(panel_3, BorderLayout.WEST);
-		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[] { 0, 0 };
-		gbl_panel_3.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_panel_3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_panel_3.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
-		panel_3.setLayout(gbl_panel_3);
-
-		lblBanner14 = new JLabel();
-		GridBagConstraints gbc_lblBanner14 = new GridBagConstraints();
-		gbc_lblBanner14.insets = new Insets(0, 0, 5, 0);
-		gbc_lblBanner14.anchor = GridBagConstraints.WEST;
-		gbc_lblBanner14.gridx = 0;
-		gbc_lblBanner14.gridy = 0;
-		panel_3.add(lblBanner14, gbc_lblBanner14);
-
-		btnRandomAc = new JButton();
-		btnRandomAc.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager
-							.submit(new RandomAcTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
-				});
-			}
-		});
-		GridBagConstraints gbc_btnRandomAc = new GridBagConstraints();
-		gbc_btnRandomAc.insets = new Insets(0, 0, 5, 0);
-		gbc_btnRandomAc.fill = GridBagConstraints.BOTH;
-		gbc_btnRandomAc.gridx = 0;
-		gbc_btnRandomAc.gridy = 2;
-		panel_3.add(btnRandomAc, gbc_btnRandomAc);
-
-		btnMeasure = new JButton();
-		btnMeasure.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager
-							.submit(new MeasureTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
-				});
-			}
-		});
-		GridBagConstraints gbc_btnMeasure = new GridBagConstraints();
-		gbc_btnMeasure.fill = GridBagConstraints.BOTH;
-		gbc_btnMeasure.insets = new Insets(0, 0, 5, 0);
-		gbc_btnMeasure.gridx = 0;
-		gbc_btnMeasure.gridy = 3;
-		panel_3.add(btnMeasure, gbc_btnMeasure);
-
-		btnShowAc = new JToggleButton();
-		adjustableBorderPanel.setEastVisible(btnShowAc.isSelected());
-		btnShowAc.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				adjustableBorderPanel.setEastVisible(btnShowAc.isSelected());
-			}
-		});
-
-		btnUseExperience = new JButton("New button");
-		btnUseExperience.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager
-							.submit(new UseExperienceTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
-				});
-			}
-		});
-		GridBagConstraints gbc_btnUseExperience = new GridBagConstraints();
-		gbc_btnUseExperience.fill = GridBagConstraints.BOTH;
-		gbc_btnUseExperience.insets = new Insets(0, 0, 5, 0);
-		gbc_btnUseExperience.gridx = 0;
-		gbc_btnUseExperience.gridy = 4;
-		panel_3.add(btnUseExperience, gbc_btnUseExperience);
-		GridBagConstraints gbc_btnShowAc = new GridBagConstraints();
-		gbc_btnShowAc.insets = new Insets(0, 0, 5, 0);
-		gbc_btnShowAc.fill = GridBagConstraints.BOTH;
-		gbc_btnShowAc.gridx = 0;
-		gbc_btnShowAc.gridy = 5;
-		panel_3.add(btnShowAc, gbc_btnShowAc);
 
 		this.modelManager = modelManager;
 		this.actionManager = actionManager;
@@ -1273,7 +1293,8 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * @param modelManager the modelManager to set
+	 * @param modelManager
+	 *            the modelManager to set
 	 */
 	public void setModelManager(ModelManager modelManager) {
 		Optional.ofNullable(this.modelManager).ifPresent(manager -> {
@@ -1304,7 +1325,8 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * @param actionManager the actionManager to set
+	 * @param actionManager
+	 *            the actionManager to set
 	 */
 	public void setActionManager(ActionManager actionManager) {
 		Optional.ofNullable(this.modelManager).ifPresent(manager -> {
@@ -1603,7 +1625,7 @@ public class MainFrame extends JFrame {
 
 		public JSpinnerCellEditor() {
 			super();
-			spinner = new JSpinner(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+			spinner = new JPreciseSpinner(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		}
 
 		/**

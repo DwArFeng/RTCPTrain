@@ -38,6 +38,8 @@ public enum I18nKey implements Name {
 	LOGGER_26("logger.26"), //
 	LOGGER_27("logger.27"), //
 	LOGGER_28("logger.28"), //
+	LOGGER_29("logger.29"), //
+	LOGGER_30("logger.30"), //
 
 	LABEL_1("label.1"), //
 	LABEL_2("label.2"), //
