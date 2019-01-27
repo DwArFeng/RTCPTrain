@@ -2,9 +2,11 @@ package com.dwarfeng.rtcptrain.util;
 
 import java.util.Objects;
 
-import org.la4j.LinearAlgebra.InverterFactory;
-import org.la4j.Matrix;
-import org.la4j.matrix.dense.Basic2DMatrix;
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.LUDecomposition;
+import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
 
 public final class TransformUtil {
 
@@ -15,8 +17,8 @@ public final class TransformUtil {
 	 * @param dz
 	 * @return
 	 */
-	public static Matrix shiftMatrix(double dx, double dy, double dz) {
-		return new Basic2DMatrix(new double[][] { //
+	public static RealMatrix shiftMatrix(double dx, double dy, double dz) {
+		return new Array2DRowRealMatrix(new double[][] { //
 				{ 1, 0, 0, dx }, //
 				{ 0, 1, 0, dy }, //
 				{ 0, 0, 1, dz }, //
@@ -32,13 +34,14 @@ public final class TransformUtil {
 	 * @param vz
 	 * @return
 	 */
-	public static Matrix rotateMatrix(double angle, double vx, double vy, double vz) throws IllegalArgumentException {
+	public static RealMatrix rotateMatrix(double angle, double vx, double vy, double vz)
+			throws IllegalArgumentException {
 		double vectorNorm = norm(vx, vy, vz);
 		if (vectorNorm == 0) {
 			throw new IllegalArgumentException("旋转矢量长度不能为0。");
 		}
 		double vxInUnit = vx / vectorNorm, vyInUnit = vy / vectorNorm, vzInUnit = vz / vectorNorm;
-		return new Basic2DMatrix(new double[][] { //
+		return new Array2DRowRealMatrix(new double[][] { //
 				{ StrictMath.pow(vxInUnit, 2) + (1 - StrictMath.pow(vxInUnit, 2)) * StrictMath.cos(angle),
 						vxInUnit * vyInUnit * (1 - StrictMath.cos(angle)) - vzInUnit * StrictMath.sin(angle),
 						vxInUnit * vzInUnit * (1 - StrictMath.cos(angle)) + vyInUnit * StrictMath.sin(angle), 0 }, //
@@ -93,15 +96,15 @@ public final class TransformUtil {
 	 * @param l
 	 * @return
 	 */
-	public static Matrix rtcpMachine2Tool(double px, double py, double pz, double v00, double v01, double v02,
+	public static RealMatrix rtcpMachine2Tool(double px, double py, double pz, double v00, double v01, double v02,
 			double v10, double v11, double v12, double v20, double v21, double v22, double v30, double v31, double v32,
 			double a, double c, double l) throws IllegalArgumentException {
 		if (norm(v00, v01, v02) == 0 || norm(v20, v21, v22) == 0) {
 			throw new IllegalArgumentException("A，C回转轴矢量长度不能为0");
 		}
 
-		Matrix machinePoint = new Basic2DMatrix(new double[][] { { px }, { py }, { pz }, { 1 } });
-		Matrix transformMatrix = //
+		RealMatrix machinePoint = new Array2DRowRealMatrix(new double[][] { { px }, { py }, { pz }, { 1 } });
+		RealMatrix transformMatrix = //
 				rotateMatrix(c, v00, v01, v02)//
 						.multiply(shiftMatrix(-v10, -v11, -v12))//
 						.multiply(rotateMatrix(a, v20, v21, v22))//
@@ -134,15 +137,15 @@ public final class TransformUtil {
 	 * @param l
 	 * @return
 	 */
-	public static Matrix rtcpTool2Machine(double px, double py, double pz, double v00, double v01, double v02,
+	public static RealMatrix rtcpTool2Machine(double px, double py, double pz, double v00, double v01, double v02,
 			double v10, double v11, double v12, double v20, double v21, double v22, double v30, double v31, double v32,
 			double a, double c, double l) throws IllegalArgumentException {
 		if (norm(v00, v01, v02) == 0 || norm(v20, v21, v22) == 0) {
 			throw new IllegalArgumentException("A，C回转轴矢量长度不能为0");
 		}
 
-		Matrix machinePoint = new Basic2DMatrix(new double[][] { { px }, { py }, { pz }, { 1 } });
-		Matrix transformMatrix = //
+		RealMatrix machinePoint = new Array2DRowRealMatrix(new double[][] { { px }, { py }, { pz }, { 1 } });
+		RealMatrix transformMatrix = //
 				rotateMatrix(c, v00, v01, v02)//
 						.multiply(shiftMatrix(-v10, -v11, -v12))//
 						.multiply(rotateMatrix(a, v20, v21, v22))//
@@ -150,7 +153,9 @@ public final class TransformUtil {
 						.multiply(shiftMatrix(0, 0, -l))//
 						.multiply(rotateMatrix(-a, v20, v21, v22))//
 						.multiply(rotateMatrix(-c, v00, v01, v02));
-		return transformMatrix.withInverter(InverterFactory.SMART).inverse().multiply(machinePoint);
+		LUDecomposition LUDe = new LUDecompositionImpl(transformMatrix);
+		DecompositionSolver solver = LUDe.getSolver();
+		return solver.getInverse().multiply(machinePoint);
 	}
 
 	/**
@@ -187,19 +192,19 @@ public final class TransformUtil {
 	 * @param cuL
 	 * @return
 	 */
-	public static Matrix rtcpError(double acV00, double acV01, double acV02, double acV10, double acV11, double acV12,
-			double acV20, double acV21, double acV22, double acV30, double acV31, double acV32, double cuV00,
-			double cuV01, double cuV02, double cuV10, double cuV11, double cuV12, double cuV20, double cuV21,
-			double cuV22, double cuV30, double cuV31, double cuV32, double datumA, double datumC, double a, double c,
-			double acL, double cuL) {
-		Matrix datumPoint = rtcpMachine2Tool(0, 0, 0, acV00, acV01, acV02, acV10, acV11, acV12, acV20, acV21, acV22,
+	public static RealMatrix rtcpError(double acV00, double acV01, double acV02, double acV10, double acV11,
+			double acV12, double acV20, double acV21, double acV22, double acV30, double acV31, double acV32,
+			double cuV00, double cuV01, double cuV02, double cuV10, double cuV11, double cuV12, double cuV20,
+			double cuV21, double cuV22, double cuV30, double cuV31, double cuV32, double datumA, double datumC,
+			double a, double c, double acL, double cuL) {
+		RealMatrix datumPoint = rtcpMachine2Tool(0, 0, 0, acV00, acV01, acV02, acV10, acV11, acV12, acV20, acV21, acV22,
 				acV30, acV31, acV32, datumA, datumC, acL);
-		Matrix tempPoint = rtcpMachine2Tool(0, 0, 0, cuV00, cuV01, cuV02, cuV10, cuV11, cuV12, cuV20, cuV21, cuV22,
+		RealMatrix tempPoint = rtcpMachine2Tool(0, 0, 0, cuV00, cuV01, cuV02, cuV10, cuV11, cuV12, cuV20, cuV21, cuV22,
 				cuV30, cuV31, cuV32, datumA, datumC, cuL);
-		tempPoint = rtcpTool2Machine(tempPoint.get(0, 0), tempPoint.get(1, 0), tempPoint.get(2, 0), cuV00, cuV01, cuV02,
-				cuV10, cuV11, cuV12, cuV20, cuV21, cuV22, cuV30, cuV31, cuV32, a, c, cuL);
-		tempPoint = rtcpMachine2Tool(tempPoint.get(0, 0), tempPoint.get(1, 0), tempPoint.get(2, 0), acV00, acV01, acV02,
-				acV10, acV11, acV12, acV20, acV21, acV22, acV30, acV31, acV32, a, c, acL);
+		tempPoint = rtcpTool2Machine(tempPoint.getEntry(0, 0), tempPoint.getEntry(1, 0), tempPoint.getEntry(2, 0),
+				cuV00, cuV01, cuV02, cuV10, cuV11, cuV12, cuV20, cuV21, cuV22, cuV30, cuV31, cuV32, a, c, cuL);
+		tempPoint = rtcpMachine2Tool(tempPoint.getEntry(0, 0), tempPoint.getEntry(1, 0), tempPoint.getEntry(2, 0),
+				acV00, acV01, acV02, acV10, acV11, acV12, acV20, acV21, acV22, acV30, acV31, acV32, a, c, acL);
 		return tempPoint.subtract(datumPoint);
 	}
 

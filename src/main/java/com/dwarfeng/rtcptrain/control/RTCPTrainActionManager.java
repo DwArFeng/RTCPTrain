@@ -20,6 +20,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.NormalDistributionImpl;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
@@ -1034,8 +1036,157 @@ class RTCPTrainActionManager implements ActionManager {
 	 */
 	@Override
 	public void randomActualRTCPParam() {
-		// TODO Auto-generated method stub
-		CT.trace("randomActualRTCPParam");
+		info(I18nKey.LOGGER_31);
+
+		SyncSettingHandler coreSettingHandler = rtcpTrain.getCoreSettingHandler();
+		SyncRTCPParamModel actualRTCPParamModel = rtcpTrain.getActualRTCPParamModel();
+
+		boolean v00Flag, v01Flag, v02Flag;
+		boolean v10Flag, v11Flag, v12Flag;
+		boolean v20Flag, v21Flag, v22Flag;
+		boolean v30Flag, v31Flag, v32Flag;
+		boolean toolLengthFlag;
+
+		double v00, v00Mean, v00Sigma;
+		double v01, v01Mean, v01Sigma;
+		double v02, v02Mean, v02Sigma;
+		double v10, v10Mean, v10Sigma;
+		double v11, v11Mean, v11Sigma;
+		double v12, v12Mean, v12Sigma;
+		double v20, v20Mean, v20Sigma;
+		double v21, v21Mean, v21Sigma;
+		double v22, v22Mean, v22Sigma;
+		double v30, v30Mean, v30Sigma;
+		double v31, v31Mean, v31Sigma;
+		double v32, v32Mean, v32Sigma;
+		double toolLength, toolLengthMean, toolLengthSigma;
+
+		coreSettingHandler.getLock().readLock().lock();
+		try {
+			v00Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V00, Boolean.class);
+			v01Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V01, Boolean.class);
+			v02Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V02, Boolean.class);
+			v10Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V10, Boolean.class);
+			v11Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V11, Boolean.class);
+			v12Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V12, Boolean.class);
+			v20Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V20, Boolean.class);
+			v21Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V21, Boolean.class);
+			v22Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V22, Boolean.class);
+			v30Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V30, Boolean.class);
+			v31Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V31, Boolean.class);
+			v32Flag = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_V32, Boolean.class);
+			toolLengthFlag = coreSettingHandler.getParsedValidValue(
+					CoreSettingItem.POLICY_NORMAL_DISTRIBUTION_ENABLED_ACTUAL_TOOL_LENGTH, Boolean.class);
+
+			v00Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V00,
+					Double.class);
+			v01Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V01,
+					Double.class);
+			v02Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V02,
+					Double.class);
+			v10Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V10,
+					Double.class);
+			v11Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V11,
+					Double.class);
+			v12Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V12,
+					Double.class);
+			v20Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V20,
+					Double.class);
+			v21Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V21,
+					Double.class);
+			v22Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V22,
+					Double.class);
+			v30Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V30,
+					Double.class);
+			v31Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V31,
+					Double.class);
+			v32Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V32,
+					Double.class);
+			toolLengthMean = coreSettingHandler.getParsedValidValue(
+					CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_TOOL_LENGTH, Double.class);
+			v00Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V00, Double.class);
+			v01Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V01, Double.class);
+			v02Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V02, Double.class);
+			v10Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V10, Double.class);
+			v11Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V11, Double.class);
+			v12Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V12, Double.class);
+			v20Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V20, Double.class);
+			v21Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V21, Double.class);
+			v22Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V22, Double.class);
+			v30Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V30, Double.class);
+			v31Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V31, Double.class);
+			v32Sigma = coreSettingHandler
+					.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_V32, Double.class);
+			toolLengthSigma = coreSettingHandler.getParsedValidValue(
+					CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_SIGMA_ACTUAL_TOOL_LENGTH, Double.class);
+		} finally {
+			coreSettingHandler.getLock().readLock().unlock();
+		}
+
+		try {
+			v00 = getRandomRTCPParam(v00Mean, v00Sigma, v00Flag);
+			v01 = getRandomRTCPParam(v01Mean, v01Sigma, v01Flag);
+			v02 = getRandomRTCPParam(v02Mean, v02Sigma, v02Flag);
+			v10 = getRandomRTCPParam(v10Mean, v10Sigma, v10Flag);
+			v11 = getRandomRTCPParam(v11Mean, v11Sigma, v11Flag);
+			v12 = getRandomRTCPParam(v12Mean, v12Sigma, v12Flag);
+			v20 = getRandomRTCPParam(v20Mean, v20Sigma, v20Flag);
+			v21 = getRandomRTCPParam(v21Mean, v21Sigma, v21Flag);
+			v22 = getRandomRTCPParam(v22Mean, v22Sigma, v22Flag);
+			v30 = getRandomRTCPParam(v30Mean, v30Sigma, v30Flag);
+			v31 = getRandomRTCPParam(v31Mean, v31Sigma, v31Flag);
+			v32 = getRandomRTCPParam(v32Mean, v32Sigma, v32Flag);
+			toolLength = getRandomRTCPParam(toolLengthMean, toolLengthSigma, toolLengthFlag);
+		} catch (Exception e) {
+			warn(I18nKey.LOGGER_32, e);
+			return;
+		}
+
+		actualRTCPParamModel.getLock().writeLock().lock();
+		try {
+			actualRTCPParamModel.setV00(v00);
+			actualRTCPParamModel.setV01(v01);
+			actualRTCPParamModel.setV02(v02);
+			actualRTCPParamModel.setV10(v10);
+			actualRTCPParamModel.setV11(v11);
+			actualRTCPParamModel.setV12(v12);
+			actualRTCPParamModel.setV20(v20);
+			actualRTCPParamModel.setV21(v21);
+			actualRTCPParamModel.setV22(v22);
+			actualRTCPParamModel.setV30(v30);
+			actualRTCPParamModel.setV31(v31);
+			actualRTCPParamModel.setV32(v32);
+			actualRTCPParamModel.setToolLength(toolLength);
+		} finally {
+			actualRTCPParamModel.getLock().writeLock().unlock();
+		}
+	}
+
+	private double getRandomRTCPParam(double mean, double sigma, boolean flag) throws MathException {
+		return flag ? new NormalDistributionImpl(mean, sigma).sample() : mean;
 	}
 
 	/**
@@ -1145,7 +1296,7 @@ class RTCPTrainActionManager implements ActionManager {
 						NumberUtil.unitTrans(datumC, Angle.DEG, Angle.RAD).doubleValue(),
 						NumberUtil.unitTrans(a, Angle.DEG, Angle.RAD).doubleValue(),
 						NumberUtil.unitTrans(c, Angle.DEG, Angle.RAD).doubleValue(), acL, cuL)
-				.get(measureDirection.getIndex(), 0);
+				.getEntry(measureDirection.getIndex(), 0);
 		formatInfo(I18nKey.LOGGER_29, datumA, datumC, a, c, measureDirection.name(), measureError);
 
 		measureErrorModel.getLock().writeLock().lock();
