@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,9 +23,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,6 +37,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -83,7 +88,9 @@ import com.dwarfeng.rtcptrain.view.task.UseExperienceTask;
  */
 public class MainFrame extends JFrame {
 
-	private static final long serialVersionUID = 1796179951959039139L;
+	private static final long serialVersionUID = -4690777196561214691L;
+
+	private static final String ACTION_KEY_1 = "ak1";
 
 	private final JPanel contentPane;
 	private final JLabel lblVersionIndicator;
@@ -727,13 +734,19 @@ public class MainFrame extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				checkManagerAndDo(() -> {
-					// 所有JSpinner提交数据。 TODO
 					MainFrame.this.actionManager
 							.submit(new ExitTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
 				});
 			}
 		});
 		contentPane = new JPanel();
+		contentPane.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				contentPane.requestFocus();
+			}
+		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -748,21 +761,6 @@ public class MainFrame extends JFrame {
 		adjustableBorderPanel.setSeperatorThickness(5);
 		adjustableBorderPanel.setEastEnabled(true);
 		contentPane.add(adjustableBorderPanel, BorderLayout.CENTER);
-		crTableModel.addTableModelListener(new TableModelListener() {
-
-			@Override
-			public void tableChanged(TableModelEvent e) {
-				if (e.getColumn() == 0 || crAdjustFlag)
-					return;
-				int index = e.getFirstRow() * 10 + (e.getColumn() - 1);
-				double newValue = (double) crTableModel.getValueAt(e.getFirstRow(), e.getColumn());
-				crDuplexingForecast.add(new Object[] { index, newValue });
-				checkManagerAndDo(() -> {
-					MainFrame.this.actionManager.submit(
-							new SetCrTask(MainFrame.this.modelManager, MainFrame.this.actionManager, index, newValue));
-				});
-			}
-		});
 
 		meaDirectionGroup = new ButtonGroup();
 		sysIn = System.in;
@@ -797,6 +795,7 @@ public class MainFrame extends JFrame {
 		panel_2.add(scrollPane_1, gbc_scrollPane_1);
 
 		acTable = new JTable();
+		acTable.putClientProperty("terminateEditOnFocusLost", true);
 		acTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		acTable.getTableHeader().setReorderingAllowed(false);
 		acTable.setFillsViewportHeight(true);
@@ -916,7 +915,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		btnUseExperience = new JButton("New button");
+		btnUseExperience = new JButton();
 		btnUseExperience.addActionListener(new ActionListener() {
 
 			@Override
@@ -975,6 +974,7 @@ public class MainFrame extends JFrame {
 		panel.add(scrollPane, gbc_scrollPane);
 
 		crTable = new JTable();
+		crTable.putClientProperty("terminateEditOnFocusLost", true);
 		crTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		crTable.getTableHeader().setReorderingAllowed(false);
 		crTable.setFillsViewportHeight(true);
@@ -983,6 +983,22 @@ public class MainFrame extends JFrame {
 		crTable.getColumnModel().getColumn(2).setCellEditor(rtcpParamCellEditor);
 		crTable.getColumnModel().getColumn(3).setCellEditor(rtcpParamCellEditor);
 		crTable.setRowHeight(32);
+		crTableModel.addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getColumn() == 0 || crAdjustFlag)
+					return;
+				int index = e.getFirstRow() * 10 + (e.getColumn() - 1);
+				double newValue = (double) crTableModel.getValueAt(e.getFirstRow(), e.getColumn());
+				crDuplexingForecast.add(new Object[] { index, newValue });
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager.submit(
+							new SetCrTask(MainFrame.this.modelManager, MainFrame.this.actionManager, index, newValue));
+				});
+			}
+		});
+
 		scrollPane.setViewportView(crTable);
 
 		lblBanner12 = new JLabel();
@@ -1267,6 +1283,21 @@ public class MainFrame extends JFrame {
 		System.setOut(exconsole.out);
 		System.setErr(exconsole.out);
 		scrollPane_2.setViewportView(exconsole);
+
+		contentPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), ACTION_KEY_1);
+		contentPane.getActionMap().put(ACTION_KEY_1, new AbstractAction() {
+
+			private static final long serialVersionUID = 4334932440780255423L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkManagerAndDo(() -> {
+					MainFrame.this.actionManager
+							.submit(new MeasureTask(MainFrame.this.modelManager, MainFrame.this.actionManager));
+				});
+			}
+		});
 
 		this.modelManager = modelManager;
 		this.actionManager = actionManager;

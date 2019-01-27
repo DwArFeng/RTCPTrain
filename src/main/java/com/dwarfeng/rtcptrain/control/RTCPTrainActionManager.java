@@ -26,7 +26,6 @@ import org.apache.commons.math.distribution.NormalDistributionImpl;
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.gui.swing.SwingUtil;
-import com.dwarfeng.dutil.basic.io.CT;
 import com.dwarfeng.dutil.basic.io.LoadFailedException;
 import com.dwarfeng.dutil.basic.io.SaveFailedException;
 import com.dwarfeng.dutil.basic.num.NumberUtil;
@@ -1194,8 +1193,67 @@ class RTCPTrainActionManager implements ActionManager {
 	 */
 	@Override
 	public void useExperience() {
-		// TODO Auto-generated method stub
-		CT.trace("useExperience");
+		info(I18nKey.LOGGER_33);
+
+		SyncSettingHandler coreSettingHandler = rtcpTrain.getCoreSettingHandler();
+		SyncRTCPParamModel currentRTCPParamModel = rtcpTrain.getCurrentRTCPParamModel();
+
+		double v00Mean, v01Mean, v02Mean;
+		double v10Mean, v11Mean, v12Mean;
+		double v20Mean, v21Mean, v22Mean;
+		double v30Mean, v31Mean, v32Mean;
+		double toolLengthMean;
+
+		coreSettingHandler.getLock().readLock().lock();
+		try {
+			v00Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V00,
+					Double.class);
+			v01Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V01,
+					Double.class);
+			v02Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V02,
+					Double.class);
+			v10Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V10,
+					Double.class);
+			v11Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V11,
+					Double.class);
+			v12Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V12,
+					Double.class);
+			v20Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V20,
+					Double.class);
+			v21Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V21,
+					Double.class);
+			v22Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V22,
+					Double.class);
+			v30Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V30,
+					Double.class);
+			v31Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V31,
+					Double.class);
+			v32Mean = coreSettingHandler.getParsedValidValue(CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_V32,
+					Double.class);
+			toolLengthMean = coreSettingHandler.getParsedValidValue(
+					CoreSettingItem.PARAM_NORMAL_DISTRIBUTION_MEAN_ACTUAL_TOOL_LENGTH, Double.class);
+		} finally {
+			coreSettingHandler.getLock().readLock().unlock();
+		}
+
+		currentRTCPParamModel.getLock().writeLock().lock();
+		try {
+			currentRTCPParamModel.setV00(v00Mean);
+			currentRTCPParamModel.setV01(v01Mean);
+			currentRTCPParamModel.setV02(v02Mean);
+			currentRTCPParamModel.setV10(v10Mean);
+			currentRTCPParamModel.setV11(v11Mean);
+			currentRTCPParamModel.setV12(v12Mean);
+			currentRTCPParamModel.setV20(v20Mean);
+			currentRTCPParamModel.setV21(v21Mean);
+			currentRTCPParamModel.setV22(v22Mean);
+			currentRTCPParamModel.setV30(v30Mean);
+			currentRTCPParamModel.setV31(v31Mean);
+			currentRTCPParamModel.setV32(v32Mean);
+			currentRTCPParamModel.setToolLength(toolLengthMean);
+		} finally {
+			currentRTCPParamModel.getLock().writeLock().unlock();
+		}
 	}
 
 	/**
