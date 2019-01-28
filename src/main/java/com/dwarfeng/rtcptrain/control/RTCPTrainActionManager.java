@@ -21,7 +21,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.NormalDistributionImpl;
+import org.apache.commons.math.random.RandomDataImpl;
 
 import com.dwarfeng.dutil.basic.cna.model.ReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
@@ -1184,8 +1184,10 @@ class RTCPTrainActionManager implements ActionManager {
 		}
 	}
 
+	private final RandomDataImpl randomDataImpl = new RandomDataImpl();
+
 	private double getRandomRTCPParam(double mean, double sigma, boolean flag) throws MathException {
-		return flag ? new NormalDistributionImpl(mean, sigma).sample() : mean;
+		return flag ? randomDataImpl.nextGaussian(mean, sigma) : mean;
 	}
 
 	/**
