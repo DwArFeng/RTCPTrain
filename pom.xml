@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.dwarfeng</groupId>
 	<artifactId>RTCPTrain</artifactId>
-	<version>1.0.0.b</version>
+	<version>1.0.1.a</version>
 	<packaging>jar</packaging>
 
 	<name>RTCPTrain</name>
@@ -51,12 +51,12 @@
 			<dependency>
 				<groupId>com.dwarfeng</groupId>
 				<artifactId>dutil-basic</artifactId>
-				<version>beta-0.2.0.a-SNAPSHOT</version>
+				<version>beta-0.2.1.a-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.dwarfeng</groupId>
 				<artifactId>dutil-develop</artifactId>
-				<version>beta-0.2.0.a-SNAPSHOT</version>
+				<version>beta-0.2.1.a-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>

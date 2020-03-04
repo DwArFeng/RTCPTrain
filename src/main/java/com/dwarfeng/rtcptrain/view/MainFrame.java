@@ -1,56 +1,5 @@
 package com.dwarfeng.rtcptrain.view;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.text.ParseException;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.EventObject;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-
-import javax.swing.AbstractAction;
-import javax.swing.AbstractCellEditor;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
-
 import com.dwarfeng.dutil.basic.cna.model.SyncReferenceModel;
 import com.dwarfeng.dutil.basic.cna.model.obv.ReferenceAdapter;
 import com.dwarfeng.dutil.basic.cna.model.obv.ReferenceObverser;
@@ -70,15 +19,25 @@ import com.dwarfeng.rtcptrain.model.obverser.RTCPParamObverser;
 import com.dwarfeng.rtcptrain.model.obverser.RotateAxisAdapter;
 import com.dwarfeng.rtcptrain.model.obverser.RotateAxisObverser;
 import com.dwarfeng.rtcptrain.util.Constants;
-import com.dwarfeng.rtcptrain.view.task.ExitTask;
-import com.dwarfeng.rtcptrain.view.task.MeasureTask;
-import com.dwarfeng.rtcptrain.view.task.RandomAcTask;
-import com.dwarfeng.rtcptrain.view.task.SetAcTask;
-import com.dwarfeng.rtcptrain.view.task.SetCrTask;
-import com.dwarfeng.rtcptrain.view.task.SetDatumRaTask;
-import com.dwarfeng.rtcptrain.view.task.SetMeaDirTask;
-import com.dwarfeng.rtcptrain.view.task.SetMeaRaTask;
-import com.dwarfeng.rtcptrain.view.task.UseExperienceTask;
+import com.dwarfeng.rtcptrain.view.task.*;
+
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.text.ParseException;
+import java.util.Queue;
+import java.util.*;
 
 /**
  * 主界面。
@@ -684,7 +643,7 @@ public class MainFrame extends JFrame {
 		@Override
 		public void fireSet(Double oldValue, Double newValue) {
 			SwingUtil.invokeInEventQueue(() -> {
-				meaErrTextField.setText(Double.toString(newValue));
+				meaErrTextField.setText(Double.toString(newValue * -1));
 			});
 		}
 
